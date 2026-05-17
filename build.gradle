@@ -6,6 +6,15 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+def minecraftDir = providers.gradleProperty("minecraftDir")
+	.orElse(providers.environmentVariable("MINECRAFT_DIR"))
+	.orElse(providers.provider { "${System.getenv('APPDATA')}\\.minecraft" })
+
+def minecraftModsDir = providers.gradleProperty("minecraftModsDir")
+	.orElse(providers.provider { "${minecraftDir.get()}\\mods" })
+
+def distributableJar = layout.buildDirectory.file("libs/${project.name}-${project.version}.jar")
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -66,6 +75,26 @@ jar {
 
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
+	}
+}
+
+tasks.register("installToMinecraft", Copy) {
+	group = "fabric"
+	description = "Builds the mod and copies the distributable jar into your Minecraft mods folder."
+	dependsOn tasks.named("build")
+	from(distributableJar)
+	into(minecraftModsDir)
+
+	doFirst {
+		def jarFile = distributableJar.get().asFile
+		def targetDir = file(minecraftModsDir.get())
+
+		if (!jarFile.exists()) {
+			throw new GradleException("Expected built jar was not found: ${jarFile}")
+		}
+
+		targetDir.mkdirs()
+		logger.lifecycle("Installing ${jarFile.name} to ${targetDir}")
 	}
 }
 
