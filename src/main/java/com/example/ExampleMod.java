@@ -1,5 +1,9 @@
 package com.example;
 
+import com.example.necromancer.network.NecromancerNetworking;
+import com.example.necromancer.server.NecromancerCommands;
+import com.example.necromancer.server.NecromancerOrderService;
+import com.example.necromancer.state.NecromancerAttachments;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -18,6 +22,11 @@ public class ExampleMod implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		NecromancerAttachments.initialize();
+		NecromancerNetworking.initialize();
+		NecromancerCommands.initialize();
+		NecromancerOrderService.initialize();
 
 		LOGGER.info("hello evil hammer world");
 	}

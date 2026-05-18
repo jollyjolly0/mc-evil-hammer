@@ -3,7 +3,8 @@
 	"package": "com.example.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"ExampleMixin"
+		"ExampleMixin",
+		"MobTargetingMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
